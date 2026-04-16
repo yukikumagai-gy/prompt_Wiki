@@ -3,449 +3,636 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prompt Wiki</title>
+<title>My Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f7f6f2;--surface:#ffffff;--surface2:#f0ede8;--border:#e2ddd8;--border2:#ccc8c2;
+  --text:#1a1916;--text2:#6b6760;--text3:#9e9a95;--accent:#2a2826;
+  --star:#d97706;--tag-bg:#eeeae4;--tag-text:#4a4640;
+  --purple-bg:#ede9fe;--purple-text:#5b21b6;
+  --teal-bg:#ccfbf1;--teal-text:#0f766e;
+  --amber-bg:#fef3c7;--amber-text:#92400e;
+  --coral-bg:#fee2e2;--coral-text:#991b1b;
+  --green-bg:#dcfce7;--green-text:#166534;
+  --blue-bg:#dbeafe;--blue-text:#1e40af;
+  --radius:10px;--radius-lg:14px;
+  font-family:'DM Sans',sans-serif;
+}
+body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
 
-  :root {
-    --bg: #f7f6f2;
-    --surface: #ffffff;
-    --surface2: #f0ede8;
-    --border: #e2ddd8;
-    --border2: #ccc8c2;
-    --text: #1a1916;
-    --text2: #6b6760;
-    --text3: #9e9a95;
-    --accent: #2a2826;
-    --star: #d97706;
-    --tag-bg: #eeeae4;
-    --tag-text: #4a4640;
-    --purple-bg: #ede9fe;
-    --purple-text: #5b21b6;
-    --teal-bg: #ccfbf1;
-    --teal-text: #0f766e;
-    --amber-bg: #fef3c7;
-    --amber-text: #92400e;
-    --coral-bg: #fee2e2;
-    --coral-text: #991b1b;
-    --radius: 10px;
-    --radius-lg: 14px;
-    font-family: 'DM Sans', sans-serif;
-  }
+/* SIDEBAR */
+.sidebar{width:230px;min-width:230px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:10;}
+.sidebar-brand{padding:22px 20px 16px;border-bottom:1px solid var(--border);}
+.sidebar-brand h1{font-size:16px;font-weight:600;letter-spacing:-.02em;color:var(--text);}
+.sidebar-brand p{font-size:12px;color:var(--text3);margin-top:2px;}
+.nav-section{padding:18px 20px 6px;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;color:var(--text2);cursor:pointer;transition:background .1s,color .1s;}
+.nav-item:hover{background:var(--bg);color:var(--text);}
+.nav-item.active{background:var(--bg);color:var(--text);font-weight:500;}
+.nav-item .icon{font-size:15px;width:18px;text-align:center;}
+.nav-badge{margin-left:auto;font-size:11px;background:var(--surface2);color:var(--text3);border-radius:99px;padding:1px 8px;min-width:22px;text-align:center;}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-  }
+/* MAIN */
+.main{margin-left:230px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5;}
+.topbar-title{font-size:15px;font-weight:500;flex:1;}
+.search-wrap{flex:1;position:relative;max-width:400px;}
+.search-wrap input{width:100%;padding:8px 14px 8px 34px;font-size:13px;font-family:inherit;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);outline:none;transition:border-color .15s;}
+.search-wrap input:focus{border-color:var(--border2);}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none;}
+.btn-new{padding:8px 16px;font-size:13px;font-family:inherit;font-weight:500;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);cursor:pointer;transition:opacity .15s;white-space:nowrap;}
+.btn-new:hover{opacity:.85;}
+.content{padding:24px 28px;flex:1;}
 
-  /* SIDEBAR */
-  .sidebar {
-    width: 230px;
-    min-width: 230px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    overflow-y: auto;
-    z-index: 10;
-  }
+/* PAGE */
+.page{display:none;}.page.active{display:block;}
 
-  .sidebar-brand {
-    padding: 22px 20px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .sidebar-brand h1 {
-    font-size: 16px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: var(--text);
-  }
-  .sidebar-brand p {
-    font-size: 12px;
-    color: var(--text3);
-    margin-top: 2px;
-  }
+/* ── DAILY REPORT ── */
+.dr-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+.dr-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;}
+.dr-form h3{font-size:14px;font-weight:500;margin-bottom:16px;color:var(--text);}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+.field input,.field textarea,.field select{width:100%;padding:9px 12px;font-size:13px;font-family:inherit;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);outline:none;transition:border-color .15s;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--border2);background:#fff;}
+.field textarea{resize:vertical;min-height:80px;line-height:1.6;}
+.mood-row{display:flex;gap:8px;}
+.mood-btn{flex:1;padding:8px;font-size:18px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;text-align:center;transition:all .15s;}
+.mood-btn.selected{border-color:var(--border2);background:var(--surface);}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
+.btn{padding:8px 18px;font-size:13px;font-family:inherit;font-weight:500;border-radius:var(--radius);cursor:pointer;border:none;transition:opacity .15s;}
+.btn:hover{opacity:.8;}
+.btn-dark{background:var(--accent);color:#fff;}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+.btn-del{background:var(--coral-bg);color:var(--coral-text);}
 
-  .new-btn {
-    display: block;
-    width: calc(100% - 24px);
-    margin: 12px 12px 0;
-    padding: 9px 14px;
-    font-size: 13px;
-    font-family: inherit;
-    font-weight: 500;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius);
-    cursor: pointer;
-    text-align: center;
-    transition: opacity .15s;
-  }
-  .new-btn:hover { opacity: .85; }
+.dr-history h3{font-size:14px;font-weight:500;margin-bottom:12px;color:var(--text);}
+.report-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.report-card:hover{border-color:var(--border2);box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.report-date{font-size:11px;color:var(--text3);margin-bottom:4px;}
+.report-summary{font-size:13px;color:var(--text);font-weight:500;margin-bottom:6px;}
+.report-mood{font-size:16px;}
+.report-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
 
-  .nav-section {
-    padding: 18px 20px 6px;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--text3);
-  }
+/* ── WIKI ── */
+.wiki-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.wiki-list{display:flex;flex-direction:column;gap:8px;}
+.view-toggle{display:flex;gap:2px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:3px;}
+.vbtn{padding:5px 10px;font-size:14px;background:none;border:none;border-radius:7px;color:var(--text3);cursor:pointer;transition:background .1s,color .1s;}
+.vbtn.active{background:var(--surface);color:var(--text);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.card:hover{border-color:var(--border2);box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.card-title{font-size:14px;font-weight:500;color:var(--text);flex:1;padding-right:8px;}
+.star-btn{background:none;border:none;font-size:16px;cursor:pointer;color:var(--text3);padding:0;flex-shrink:0;}
+.star-btn.on{color:var(--star);}
+.card-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.card-foot{display:flex;gap:5px;flex-wrap:wrap;}
+.tag{font-size:11px;padding:3px 9px;border-radius:99px;background:var(--tag-bg);color:var(--tag-text);font-weight:500;}
+.tag.purple{background:var(--purple-bg);color:var(--purple-text);}
+.tag.teal{background:var(--teal-bg);color:var(--teal-text);}
+.tag.amber{background:var(--amber-bg);color:var(--amber-text);}
+.tag.coral{background:var(--coral-bg);color:var(--coral-text);}
+.tag.green{background:var(--green-bg);color:var(--green-text);}
+.tag.blue{background:var(--blue-bg);color:var(--blue-text);}
+.count-label{font-size:12px;color:var(--text3);margin-bottom:14px;}
+.cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.cat-tab{padding:5px 14px;font-size:12px;font-weight:500;background:var(--surface);border:1px solid var(--border);border-radius:99px;cursor:pointer;color:var(--text2);transition:all .15s;}
+.cat-tab.active,.cat-tab:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3);font-size:14px;}
+.empty-state p{font-size:12px;margin-top:8px;}
 
-  .nav-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 20px;
-    font-size: 13px;
-    color: var(--text2);
-    cursor: pointer;
-    border-radius: 0;
-    transition: background .1s, color .1s;
-  }
-  .nav-item:hover { background: var(--bg); color: var(--text); }
-  .nav-item.active { background: var(--bg); color: var(--text); font-weight: 500; }
-  .nav-badge {
-    font-size: 11px;
-    background: var(--surface2);
-    color: var(--text3);
-    border-radius: 99px;
-    padding: 1px 8px;
-    min-width: 22px;
-    text-align: center;
-  }
+/* ── TODO ── */
+.todo-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;}
+.todo-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;}
+.todo-form h3{font-size:14px;font-weight:500;margin-bottom:14px;}
+.todo-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.todo-col{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;}
+.todo-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.todo-col-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);}
+.todo-col-count{font-size:11px;background:var(--surface2);color:var(--text3);border-radius:99px;padding:1px 7px;}
+.todo-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.todo-item:hover{border-color:var(--border2);}
+.todo-item-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.todo-item-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.todo-item-done{opacity:.5;}
+.todo-item-done .todo-item-title{text-decoration:line-through;}
+.priority-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.priority-dot.high{background:#ef4444;}
+.priority-dot.med{background:#f59e0b;}
+.priority-dot.low{background:#10b981;}
+.todo-due{font-size:11px;color:var(--text3);}
+.todo-summary{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;}
+.todo-summary h3{font-size:13px;font-weight:500;margin-bottom:14px;}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.stat-row:last-child{border-bottom:none;}
+.stat-val{font-weight:600;font-size:14px;}
+.progress-bar-wrap{margin-top:14px;}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:6px;}
+.progress-bar{background:var(--surface2);border-radius:99px;height:6px;overflow:hidden;}
+.progress-fill{background:var(--accent);height:100%;border-radius:99px;transition:width .4s ease;}
 
-  /* MAIN */
-  .main {
-    margin-left: 230px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
+/* ── APPS ── */
+.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.app-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
+.app-card:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.app-card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;}
+.app-card-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.app-card-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.app-card-footer{display:flex;justify-content:space-between;align-items:center;}
+.app-status{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);}
+.status-dot{width:6px;height:6px;border-radius:50%;}
+.status-dot.active{background:#10b981;}
+.status-dot.dev{background:#f59e0b;}
+.app-open-btn{padding:5px 12px;font-size:12px;font-weight:500;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;color:var(--text2);transition:all .15s;}
+.app-open-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
 
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 28px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 5;
-  }
 
-  .search-wrap {
-    flex: 1;
-    position: relative;
-    max-width: 480px;
-  }
-  .search-wrap input {
-    width: 100%;
-    padding: 9px 14px 9px 36px;
-    font-size: 13px;
-    font-family: inherit;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    outline: none;
-    transition: border-color .15s;
-  }
-  .search-wrap input:focus { border-color: var(--border2); }
-  .search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 13px;
-    color: var(--text3);
-    pointer-events: none;
-  }
+/* ── SHEETS ── */
+.sheets-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+.sheets-search{flex:1;max-width:320px;position:relative;}
+.sheets-search input{width:100%;padding:8px 12px 8px 32px;font-size:13px;font-family:inherit;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);outline:none;transition:border-color .15s;}
+.sheets-search input:focus{border-color:var(--border2);}
+.sheets-search .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none;}
+.sheets-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.sheets-table{width:100%;border-collapse:collapse;font-size:13px;}
+.sheets-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap;}
+.sheets-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+.sheets-table tr:last-child td{border-bottom:none;}
+.sheets-table tr:hover td{background:var(--bg);}
+.sheet-name{font-weight:500;color:var(--text);}
+.sheet-desc{font-size:12px;color:var(--text2);margin-top:2px;}
+.sheet-url-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:11px;font-weight:500;background:var(--teal-bg);color:var(--teal-text);border:none;border-radius:99px;cursor:pointer;transition:opacity .15s;text-decoration:none;}
+.sheet-url-btn:hover{opacity:.8;}
+.sheet-actions{display:flex;gap:6px;}
+.sheet-edit-btn{padding:4px 10px;font-size:11px;font-weight:500;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;color:var(--text2);transition:all .15s;}
+.sheet-edit-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+.sheets-cat-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
 
-  .view-toggle {
-    display: flex;
-    gap: 2px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 3px;
-  }
-  .vbtn {
-    padding: 5px 10px;
-    font-size: 14px;
-    background: none;
-    border: none;
-    border-radius: 7px;
-    color: var(--text3);
-    cursor: pointer;
-    transition: background .1s, color .1s;
-  }
-  .vbtn.active { background: var(--surface); color: var(--text); }
 
-  .content {
-    padding: 24px 28px;
-    flex: 1;
-  }
-  .count-label {
-    font-size: 12px;
-    color: var(--text3);
-    margin-bottom: 16px;
-  }
+/* ── SHEETS CATEGORY TREE ── */
+.sheets-layout{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start;}
+.sheets-sidebar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;position:sticky;top:80px;}
+.sheets-sidebar-title{padding:12px 14px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);border-bottom:1px solid var(--border);}
+.cat-tree-item{padding:8px 14px;font-size:13px;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .1s,color .1s;}
+.cat-tree-item:hover{background:var(--bg);color:var(--text);}
+.cat-tree-item.active{background:var(--bg);color:var(--text);font-weight:500;}
+.cat-tree-child{padding:7px 14px 7px 28px;font-size:12px;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .1s,color .1s;border-left:2px solid var(--border);margin-left:14px;}
+.cat-tree-child:hover{background:var(--bg);color:var(--text);}
+.cat-tree-child.active{background:var(--bg);color:var(--text);font-weight:500;border-left-color:var(--accent);}
+.cat-badge-sm{font-size:10px;background:var(--surface2);color:var(--text3);border-radius:99px;padding:1px 7px;}
+.cat-tree-parent-label{padding:10px 14px 4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);border-top:1px solid var(--border);}
+@media(max-width:760px){.sheets-layout{grid-template-columns:1fr;}.sheets-sidebar{position:static;}}
 
-  /* CARDS */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-  .list { display: flex; flex-direction: column; gap: 8px; }
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 16px 18px;
-    cursor: pointer;
-    transition: border-color .15s, box-shadow .15s;
-  }
-  .card:hover { border-color: var(--border2); box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+/* ── 1on1 複数選択 ── */
+.partner-checks{display:flex;flex-direction:column;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;}
+.partner-check-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);cursor:pointer;padding:3px 0;}
+.partner-check-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+.partner-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;}
 
-  .card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .card-title { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.4; flex: 1; padding-right: 8px; }
-  .star-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--text3); padding: 0; line-height: 1; flex-shrink: 0; }
-  .star-btn.on { color: var(--star); }
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(20,18,15,.45);display:flex;align-items:center;justify-content:center;z-index:100;}
+.modal{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:560px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.18);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border);}
+.modal-head h2{font-size:16px;font-weight:500;}
+.close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text3);line-height:1;padding:2px;}
+.close:hover{color:var(--text);}
+.modal-body{padding:20px 22px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:14px;}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+.prompt-display{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-size:13px;font-family:'DM Mono',monospace;white-space:pre-wrap;line-height:1.7;max-height:260px;overflow-y:auto;}
+.copy-btn{padding:5px 14px;font-size:12px;font-weight:500;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);cursor:pointer;transition:opacity .15s;}
+.copy-btn:hover{opacity:.8;}
+.copy-btn.copied{background:var(--teal-text);}
 
-  .card-desc { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 12px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-
-  .card-foot { display: flex; gap: 5px; flex-wrap: wrap; }
-  .tag {
-    font-size: 11px;
-    padding: 3px 9px;
-    border-radius: 99px;
-    background: var(--tag-bg);
-    color: var(--tag-text);
-    font-weight: 500;
-  }
-  .tag.purple { background: var(--purple-bg); color: var(--purple-text); }
-  .tag.teal   { background: var(--teal-bg);   color: var(--teal-text); }
-  .tag.amber  { background: var(--amber-bg);  color: var(--amber-text); }
-  .tag.coral  { background: var(--coral-bg);  color: var(--coral-text); }
-
-  /* MODAL */
-  .overlay {
-    position: fixed; inset: 0;
-    background: rgba(20,18,15,.45);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 100;
-    padding: 16px;
-  }
-  .modal {
-    background: var(--surface);
-    border-radius: var(--radius-lg);
-    width: 580px;
-    max-width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-  }
-  .modal-head {
-    padding: 20px 22px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .modal-head h2 { font-size: 15px; font-weight: 500; }
-  .close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text3); line-height: 1; padding: 0; }
-  .modal-body { padding: 22px; display: flex; flex-direction: column; gap: 16px; }
-  .field label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
-  .field input, .field select, .field textarea {
-    width: 100%;
-    padding: 9px 12px;
-    font-size: 13px;
-    font-family: inherit;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    outline: none;
-    transition: border-color .15s;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--border2); }
-  .field textarea { min-height: 130px; resize: vertical; font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.7; }
-
-  .modal-foot {
-    padding: 16px 22px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-  .btn { padding: 8px 18px; font-size: 13px; font-family: inherit; font-weight: 500; border-radius: var(--radius); cursor: pointer; transition: opacity .15s; }
-  .btn-ghost { background: none; border: 1px solid var(--border); color: var(--text2); }
-  .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
-  .btn-dark { background: var(--accent); border: 1px solid var(--accent); color: #fff; }
-  .btn-dark:hover { opacity: .85; }
-  .btn-del { background: none; border: 1px solid #fca5a5; color: #b91c1c; }
-  .btn-del:hover { background: var(--coral-bg); }
-
-  .prompt-display {
-    background: var(--bg);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    font-size: 12px;
-    font-family: 'DM Mono', monospace;
-    line-height: 1.8;
-    color: var(--text);
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-  .copy-btn {
-    padding: 5px 14px;
-    font-size: 12px;
-    font-family: inherit;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: none;
-    color: var(--text2);
-    cursor: pointer;
-    transition: border-color .15s, color .15s;
-  }
-  .copy-btn:hover { border-color: var(--border2); color: var(--text); }
-  .copy-btn.copied { border-color: var(--teal-text); color: var(--teal-text); }
-
-  .empty-state { text-align: center; padding: 80px 20px; color: var(--text3); font-size: 14px; }
-  .empty-state p { margin-top: 8px; font-size: 12px; }
-
-  @media (max-width: 640px) {
-    .sidebar { transform: translateX(-100%); transition: transform .2s; }
-    .sidebar.open { transform: translateX(0); }
-    .main { margin-left: 0; }
-    .topbar { padding: 12px 16px; }
-    .content { padding: 16px; }
-    .hamburger { display: flex !important; }
-  }
-  .hamburger { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text); padding: 2px; }
+@media(max-width:860px){
+  .dr-layout,.todo-layout{grid-template-columns:1fr;}
+  .todo-cols{grid-template-columns:1fr;}
+  .apps-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
+}
+@media(max-width:640px){
+  .sidebar{transform:translateX(-100%);transition:transform .2s;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .topbar,.content{padding:12px 16px;}
+  .hamburger{display:flex!important;}
+  .todo-cols{grid-template-columns:1fr;}
+}
+.hamburger{display:none;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text);padding:2px;}
 </style>
 </head>
 <body>
 
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
-    <h1>Prompt Wiki</h1>
-    <p>プロンプト管理ツール</p>
+    <h1>📊 My Dashboard</h1>
+    <p>個人分析ツール</p>
   </div>
-  <button class="new-btn" onclick="openNew()">+ 新規プロンプト</button>
-  <div class="nav-section">カテゴリ</div>
-  <div id="cat-nav"></div>
-  <div class="nav-section" style="margin-top:8px">フィルター</div>
-  <div class="nav-item" id="fav-nav" onclick="toggleFav()">
-    ⭐ お気に入り
-    <span class="nav-badge" id="fav-count">0</span>
-  </div>
+  <div class="nav-section">メニュー</div>
+  <div class="nav-item active" id="nav-todo" onclick="switchPage('todo')"><span class="icon">✅</span>業務 Todo<span class="nav-badge" id="badge-todo">0</span></div>
+  <div class="nav-item" id="nav-daily" onclick="switchPage('daily')"><span class="icon">📝</span>日報<span class="nav-badge" id="badge-daily">0</span></div>
+  <div class="nav-item" id="nav-one" onclick="switchPage('one')"><span class="icon">🤝</span>1on1<span class="nav-badge" id="badge-one">0</span></div>
+  <div class="nav-item" id="nav-apps" onclick="switchPage('apps')"><span class="icon">🚀</span>アプリ一覧<span class="nav-badge" id="badge-apps">0</span></div>
+  <div class="nav-item" id="nav-sheets" onclick="switchPage('sheets')"><span class="icon">📊</span>シート一覧<span class="nav-badge" id="badge-sheets">0</span></div>
+  <div class="nav-item" id="nav-wiki" onclick="switchPage('wiki')"><span class="icon">📚</span>Prompt Wiki<span class="nav-badge" id="badge-wiki">0</span></div>
 </aside>
 
 <div class="main">
   <div class="topbar">
-    <button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
-    <div class="search-wrap">
+    <button class="hamburger" id="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    <div class="topbar-title" id="topbar-title">業務 Todo</div>
+    <div class="search-wrap" id="search-wrap" style="display:none">
       <span class="search-icon">🔍</span>
-      <input type="text" id="search" placeholder="タイトル・タグ・本文で検索..." oninput="render()">
+      <input type="text" id="search" placeholder="検索..." oninput="renderWiki()">
     </div>
-    <div class="view-toggle">
-      <button class="vbtn active" id="vg" onclick="setView('grid')">⊞</button>
-      <button class="vbtn" id="vl" onclick="setView('list')">≡</button>
-    </div>
+    <button class="btn-new" id="btn-new" onclick="onNewClick()">+ 新規作成</button>
   </div>
+
   <div class="content">
-    <div class="count-label" id="count-label"></div>
-    <div id="cards-area"></div>
+
+    <!-- ===== DAILY REPORT ===== -->
+    <div class="page" id="page-daily">
+      <div class="dr-layout">
+        <div class="dr-form">
+          <h3 id="dr-form-title">今日の日報を記録</h3>
+          <input type="hidden" id="dr-edit-id" value="">
+          <div class="field"><label>日付</label><input type="date" id="dr-date"></div>
+          <div class="field"><label>今日のコンディション</label>
+            <div class="mood-row">
+              <button class="mood-btn" data-mood="☀️" onclick="selectMood(this)" title="大変良い">☀️</button>
+              <button class="mood-btn" data-mood="⛅" onclick="selectMood(this)" title="良い">⛅</button>
+              <button class="mood-btn" data-mood="☁️" onclick="selectMood(this)" title="普通">☁️</button>
+              <button class="mood-btn" data-mood="☔" onclick="selectMood(this)" title="悪い">☔</button>
+              <button class="mood-btn" data-mood="⛈️" onclick="selectMood(this)" title="非常に悪い">⛈️</button>
+            </div>
+            <div id="mood-label" style="text-align:center;font-size:11px;color:var(--text3);margin-top:6px">選択してください</div>
+          </div>
+          <div class="field"><label>今日やったこと</label><textarea id="dr-done" placeholder="今日完了したタスクや活動..." rows="4"></textarea></div>
+          <div class="field"><label>課題・気づき</label><textarea id="dr-issues" placeholder="問題点や気づいたこと..." rows="3"></textarea></div>
+          <div class="field"><label>明日の目標</label><textarea id="dr-next" placeholder="明日やること・目標..." rows="3"></textarea></div>
+          <div class="field"><label>タグ（カンマ区切り）</label><input type="text" id="dr-tags" placeholder="例: 開発, ミーティング, 分析"></div>
+          <div class="form-actions">
+            <button class="btn btn-ghost" onclick="resetDrForm()">リセット</button>
+            <button class="btn btn-dark" onclick="saveDailyReport()">保存</button>
+          </div>
+        </div>
+        <div class="dr-history">
+          <h3>過去の日報 <span id="dr-history-count" style="font-size:12px;color:var(--text3);font-weight:400"></span></h3>
+          <div id="dr-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== WIKI ===== -->
+    <div class="page" id="page-wiki">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="cat-tabs" id="wiki-cat-tabs"></div>
+        <div class="view-toggle">
+          <button class="vbtn active" id="vg" onclick="setWikiView('grid')">⊞</button>
+          <button class="vbtn" id="vl" onclick="setWikiView('list')">≡</button>
+        </div>
+      </div>
+      <div class="count-label" id="wiki-count"></div>
+      <div id="wiki-area"></div>
+    </div>
+
+    <!-- ===== TODO ===== -->
+    <div class="page active" id="page-todo">
+      <div class="todo-layout">
+        <div>
+          <div class="todo-cols" id="todo-cols"></div>
+        </div>
+        <div class="todo-summary">
+          <h3>📊 進捗サマリー</h3>
+          <div id="todo-stats"></div>
+          <div class="progress-bar-wrap">
+            <div class="progress-label"><span>完了率</span><span id="todo-progress-pct">0%</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="todo-progress-fill" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== APPS ===== -->
+    <div class="page" id="page-apps">
+      <div class="apps-grid" id="apps-grid"></div>
+    </div>
+
+    <!-- ===== 1on1 ===== -->
+    <div class="page" id="page-one">
+      <div class="dr-layout">
+        <div class="dr-form">
+          <h3 id="one-form-title">1on1 を記録</h3>
+          <input type="hidden" id="one-edit-id" value="">
+          <div class="field"><label>日付</label><input type="date" id="one-date"></div>
+          <div class="field"><label>参加者 *（複数選択可）</label>
+            <div class="partner-checks" id="partner-checks">
+              <label class="partner-check-item"><input type="checkbox" value="山元さん"> 山元さん</label>
+              <label class="partner-check-item"><input type="checkbox" value="青木さん"> 青木さん</label>
+              <label class="partner-check-item"><input type="checkbox" value="山口さん（輔）"> 山口さん（輔）</label>
+              <label class="partner-check-item"><input type="checkbox" value="山口さん（介）"> 山口さん（介）</label>
+            </div>
+          </div>
+          <div class="field"><label>議事録 URL（Google ドキュメント等）</label><input type="url" id="one-doc-url" placeholder="https://docs.google.com/document/..."></div>
+          <div class="field"><label>事前確認・話したい内容</label><textarea id="one-agenda" placeholder="事前に確認したいこと・議題..." rows="3"></textarea></div>
+          <div class="field"><label>話した内容</label><textarea id="one-talked" placeholder="話したトピック・内容を記録..." rows="4"></textarea></div>
+          <div class="field"><label>課題</label><textarea id="one-issues" placeholder="浮上した課題や問題点..." rows="3"></textarea></div>
+          <div class="field"><label>次回以降の Todo</label><textarea id="one-next" placeholder="フォローアップすべきアクション..." rows="3"></textarea></div>
+          <div class="field"><label>タグ（カンマ区切り）</label><input type="text" id="one-tags" placeholder="例: キャリア, フィードバック, 目標"></div>
+          <div class="form-actions">
+            <button class="btn btn-ghost" onclick="resetOneForm()">リセット</button>
+            <button class="btn btn-dark" onclick="saveOne()">保存</button>
+          </div>
+        </div>
+        <div class="dr-history">
+          <h3>1on1 履歴 <span id="one-history-count" style="font-size:12px;color:var(--text3);font-weight:400"></span></h3>
+          <div class="cat-tabs" id="one-partner-tabs" style="margin-bottom:12px;flex-wrap:wrap"></div>
+          <div id="one-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SHEETS ===== -->
+    <div class="page" id="page-sheets">
+      <div class="sheets-layout">
+        <!-- カテゴリツリー -->
+        <div class="sheets-sidebar">
+          <div class="sheets-sidebar-title">カテゴリ</div>
+          <div id="sheets-cat-tree"></div>
+        </div>
+        <!-- メインコンテンツ -->
+        <div>
+          <div class="sheets-toolbar">
+            <div class="sheets-search">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="sheets-search" placeholder="名前・説明・メモで検索..." oninput="renderSheets()">
+            </div>
+          </div>
+          <div class="sheets-table-wrap">
+            <table class="sheets-table">
+              <thead>
+                <tr>
+                  <th>名前 / 説明</th>
+                  <th>タグ</th>
+                  <th>最終更新日</th>
+                  <th>URL</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="sheets-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script>
-const CATS = ['すべて','執筆','コーディング','分析','翻訳','画像生成','その他'];
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+let dailyReports = [], wikiItems = [], todos = [], apps = [], ones = [], sheets = [];
+let wikiView = 'grid', wikiCat = 'すべて';
+const WIKI_CATS = ['すべて','執筆','コーディング','分析','翻訳','画像生成','その他'];
 const TAG_COLORS = ['purple','teal','','amber','coral','teal',''];
-let view = 'grid', activeCat = 'すべて', favOnly = false;
-let prompts = [];
 
-function loadData() {
-  try {
-    const s = localStorage.getItem('prompt-wiki-v1');
-    if (s) prompts = JSON.parse(s);
-  } catch(e) {}
-  if (!prompts.length) {
-    prompts = [
-      { id:1, title:'ブログ記事生成', desc:'SEOを意識した記事を生成するプロンプト', prompt:'あなたはプロのコンテンツライターです。以下のテーマについて、SEOを意識した読みやすいブログ記事を書いてください。\n\nテーマ: {{テーマ}}\nターゲット読者: {{対象読者}}\n文字数: 約{{文字数}}文字', cat:'執筆', tags:['SEO','ブログ'], star:true },
-      { id:2, title:'コードレビュー', desc:'コードの品質・バグ・改善点を指摘する', prompt:'以下のコードをレビューしてください。\n\n```\n{{コード}}\n```\n\n以下の観点でフィードバックをください：\n1. バグや潜在的な問題\n2. パフォーマンス改善\n3. 可読性・保守性', cat:'コーディング', tags:['レビュー','品質'], star:false },
-      { id:3, title:'データ分析サマリー', desc:'数値データを分かりやすく要約する', prompt:'以下のデータを分析し、重要な洞察をまとめてください。\n\nデータ: {{データ}}\n\n・主要な傾向\n・異常値や注目点\n・推奨アクション', cat:'分析', tags:['データ','レポート'], star:true },
-    ];
-    saveData();
+function load(){
+  try{
+    dailyReports = JSON.parse(localStorage.getItem('dash-daily-v1')||'[]');
+    wikiItems    = JSON.parse(localStorage.getItem('dash-wiki-v1')||'[]');
+    todos        = JSON.parse(localStorage.getItem('dash-todo-v1')||'[]');
+    apps         = JSON.parse(localStorage.getItem('dash-apps-v1')||'[]');
+    ones         = JSON.parse(localStorage.getItem('dash-one-v1')||'[]');
+    sheets       = JSON.parse(localStorage.getItem('dash-sheets-v1')||'[]');
+  }catch(e){}
+
+  // Migrate from old prompt-wiki if empty
+  if(!wikiItems.length){
+    try{
+      const old = JSON.parse(localStorage.getItem('prompt-wiki-v1')||'[]');
+      if(old.length){ wikiItems = old; save('wiki'); }
+    }catch(e){}
   }
-  render(); renderCats();
+
+  if(!wikiItems.length){
+    wikiItems=[
+      {id:1,title:'ブログ記事生成',desc:'SEOを意識した記事を生成するプロンプト',prompt:'あなたはプロのコンテンツライターです。\n\nテーマ: {{テーマ}}\nターゲット読者: {{対象読者}}\n文字数: 約{{文字数}}文字',cat:'執筆',tags:['SEO','ブログ'],star:true},
+      {id:2,title:'コードレビュー',desc:'コードの品質・バグ・改善点を指摘する',prompt:'以下のコードをレビューしてください。\n\n```\n{{コード}}\n```',cat:'コーディング',tags:['レビュー','品質'],star:false},
+      {id:3,title:'データ分析サマリー',desc:'数値データを分かりやすく要約する',prompt:'以下のデータを分析し、重要な洞察をまとめてください。\n\nデータ: {{データ}}',cat:'分析',tags:['データ','レポート'],star:true},
+    ];
+    save('wiki');
+  }
+  if(!todos.length){
+    todos=[
+      {id:1,title:'週次レポート作成',status:'todo',priority:'high',due:'2026-04-20',tags:['レポート']},
+      {id:2,title:'ダッシュボード設計',status:'doing',priority:'high',due:'2026-04-18',tags:['開発']},
+      {id:3,title:'データ集計スクリプト',status:'doing',priority:'med',due:'2026-04-22',tags:['開発']},
+      {id:4,title:'ミーティング準備',status:'done',priority:'med',due:'2026-04-16',tags:['会議']},
+    ];
+    save('todo');
+  }
+  if(!apps.length){
+    apps=[
+      {id:1,title:'Prompt Wiki',desc:'プロンプトを管理・検索できるWikiツール',icon:'📚',color:'#ede9fe',status:'active',url:'',tags:['プロンプト','Wiki']},
+    ];
+    save('apps');
+  }
+  updateBadges();
 }
 
-function saveData() {
-  try { localStorage.setItem('prompt-wiki-v1', JSON.stringify(prompts)); } catch(e) {}
+function save(k){
+  const map={daily:'dash-daily-v1',wiki:'dash-wiki-v1',todo:'dash-todo-v1',apps:'dash-apps-v1',one:'dash-one-v1',sheets:'dash-sheets-v1'};
+  const data={daily:dailyReports,wiki:wikiItems,todo:todos,apps:apps,one:ones,sheets:sheets};
+  try{localStorage.setItem(map[k],JSON.stringify(data[k]));}catch(e){}
 }
 
-function e(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function renderCats() {
-  const counts = {};
-  CATS.forEach(c => counts[c] = 0);
-  prompts.forEach(p => { counts['すべて']++; counts[p.cat] = (counts[p.cat]||0)+1; });
-  document.getElementById('cat-nav').innerHTML = CATS.map(c =>
-    `<div class="nav-item${activeCat===c&&!favOnly?' active':''}" onclick="setCat('${c}')">${c}<span class="nav-badge">${counts[c]||0}</span></div>`
-  ).join('');
-  document.getElementById('fav-count').textContent = prompts.filter(p=>p.star).length;
-  document.getElementById('fav-nav').classList.toggle('active', favOnly);
+function updateBadges(){
+  document.getElementById('badge-daily').textContent=dailyReports.length;
+  document.getElementById('badge-wiki').textContent=wikiItems.length;
+  const open=todos.filter(t=>t.status!=='done').length;
+  document.getElementById('badge-todo').textContent=open||'';
+  document.getElementById('badge-apps').textContent=apps.length;
+  document.getElementById('badge-one').textContent=ones.length||'';
+  document.getElementById('badge-sheets').textContent=sheets.length||'';
 }
 
-function setCat(c) { activeCat=c; favOnly=false; render(); renderCats(); }
-function toggleFav() { favOnly=!favOnly; render(); renderCats(); }
-function setView(v) {
-  view=v;
-  document.getElementById('vg').classList.toggle('active', v==='grid');
-  document.getElementById('vl').classList.toggle('active', v==='list');
-  render();
-}
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+function e(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+let curPage = 'todo';
+function switchPage(p){
+  curPage=p;
+  ['daily','wiki','todo','apps','one','sheets'].forEach(x=>{
+    document.getElementById('page-'+x).classList.toggle('active',x===p);
+    document.getElementById('nav-'+x).classList.toggle('active',x===p);
+  });
+  const titles={daily:'日報',wiki:'Prompt Wiki',todo:'業務 Todo',apps:'アプリ一覧',one:'1on1',sheets:'シート一覧'};
+  document.getElementById('topbar-title').textContent=titles[p];
+  document.getElementById('search-wrap').style.display=(p==='wiki')?'block':'none';
+  document.getElementById('btn-new').textContent=
+    p==='daily'?'+ 新規日報':p==='wiki'?'+ 新規 Prompt Wiki':p==='todo'?'+ 新規 Todo':p==='apps'?'+ 新規アプリ':p==='one'?'+ 新規1on1':'+ 新規シート登録';
+  if(p==='wiki')renderWiki();
+  if(p==='todo')renderTodo();
+  if(p==='apps')renderApps();
+  if(p==='daily')renderDailyList();
+  if(p==='one'){resetOneForm();renderOneList();
+renderSheets();}
+  if(p==='sheets')renderSheets();
+  document.getElementById('sidebar').classList.remove('open');
 }
 
-function filtered() {
-  const q = document.getElementById('search').value.toLowerCase();
-  return prompts.filter(p => {
-    if (activeCat !== 'すべて' && p.cat !== activeCat) return false;
-    if (favOnly && !p.star) return false;
-    if (q && !p.title.toLowerCase().includes(q) && !p.desc.toLowerCase().includes(q) && !p.prompt.toLowerCase().includes(q) && !p.tags.some(t=>t.toLowerCase().includes(q))) return false;
+function onNewClick(){
+  if(curPage==='daily'){resetDrForm();}
+  else if(curPage==='wiki'){openWikiNew();}
+  else if(curPage==='todo'){openTodoNew();}
+  else if(curPage==='apps'){openAppNew();}
+  else if(curPage==='one'){resetOneForm();}
+  else if(curPage==='sheets'){openSheetNew();}
+}
+
+// ═══════════════════════════════════════
+// DAILY REPORT
+// ═══════════════════════════════════════
+let selectedMood='😊';
+const MOOD_LABELS={'☀️':'大変良い','⛅':'良い','☁️':'普通','☔':'悪い','⛈️':'非常に悪い'};
+function selectMood(btn){
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedMood=btn.dataset.mood;
+  const lbl=document.getElementById('mood-label');
+  if(lbl)lbl.textContent=MOOD_LABELS[selectedMood]||'';
+}
+
+function resetDrForm(){
+  document.getElementById('dr-edit-id').value='';
+  document.getElementById('dr-form-title').textContent='今日の日報を記録';
+  document.getElementById('dr-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('dr-done').value='';
+  document.getElementById('dr-issues').value='';
+  document.getElementById('dr-next').value='';
+  document.getElementById('dr-tags').value='';
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelector('.mood-btn[data-mood="☀️"]').classList.add('selected');
+  selectedMood='☀️';
+  const lbl=document.getElementById('mood-label');
+  if(lbl)lbl.textContent='大変良い';
+}
+
+function saveDailyReport(){
+  const date=document.getElementById('dr-date').value;
+  if(!date){alert('日付を入力してください');return;}
+  const done=document.getElementById('dr-done').value.trim();
+  if(!done){alert('今日やったことを入力してください');return;}
+  const editId=document.getElementById('dr-edit-id').value;
+  const data={
+    id:editId||Date.now(),date,mood:selectedMood,
+    done,issues:document.getElementById('dr-issues').value.trim(),
+    next:document.getElementById('dr-next').value.trim(),
+    tags:document.getElementById('dr-tags').value.split(',').map(t=>t.trim()).filter(Boolean)
+  };
+  if(editId){
+    const idx=dailyReports.findIndex(r=>r.id==editId);
+    if(idx>=0)dailyReports[idx]=data;
+  }else{
+    dailyReports.unshift(data);
+  }
+  save('daily');updateBadges();renderDailyList();resetDrForm();
+}
+
+function renderDailyList(){
+  const list=dailyReports.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('dr-history-count').textContent=`(${list.length}件)`;
+  document.getElementById('dr-list').innerHTML=list.map(r=>`
+    <div class="report-card" onclick="openDailyView(${r.id})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="report-date">${r.date}</div>
+          <div class="report-summary">${e(r.done.split('\n')[0].slice(0,40))}${r.done.length>40?'…':''}</div>
+        </div>
+        <span class="report-mood">${r.mood||'😊'}</span>
+      </div>
+      <div class="report-tags">${r.tags.map(t=>`<span class="tag">${e(t)}</span>`).join('')}</div>
+    </div>`).join('')||'<div class="empty-state">📝 まだ日報がありません<p>左のフォームから記録しましょう</p></div>';
+}
+
+function openDailyView(id){
+  const r=dailyReports.find(x=>x.id==id);if(!r)return;
+  showOverlay(`
+    <div class="modal-head"><h2>${r.date} の日報 ${r.mood||''}</h2><button class="close" onclick="closeOverlay()">×</button></div>
+    <div class="modal-body">
+      <div><strong style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)">やったこと</strong><p style="margin-top:6px;font-size:13px;line-height:1.7">${e(r.done).replace(/\n/g,'<br>')}</p></div>
+      ${r.issues?`<div><strong style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)">課題・気づき</strong><p style="margin-top:6px;font-size:13px;line-height:1.7">${e(r.issues).replace(/\n/g,'<br>')}</p></div>`:''}
+      ${r.next?`<div><strong style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)">明日の目標</strong><p style="margin-top:6px;font-size:13px;line-height:1.7">${e(r.next).replace(/\n/g,'<br>')}</p></div>`:''}
+      ${r.tags.length?`<div style="display:flex;gap:5px;flex-wrap:wrap">${r.tags.map(t=>`<span class="tag">${e(t)}</span>`).join('')}</div>`:''}
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-del" onclick="deleteDailyReport(${r.id})">削除</button>
+      <button class="btn btn-ghost" onclick="closeOverlay()">閉じる</button>
+      <button class="btn btn-dark" onclick="editDailyReport(${r.id});closeOverlay()">編集</button>
+    </div>`);
+}
+
+function editDailyReport(id){
+  const r=dailyReports.find(x=>x.id==id);if(!r)return;
+  document.getElementById('dr-edit-id').value=r.id;
+  document.getElementById('dr-form-title').textContent='日報を編集';
+  document.getElementById('dr-date').value=r.date;
+  document.getElementById('dr-done').value=r.done;
+  document.getElementById('dr-issues').value=r.issues||'';
+  document.getElementById('dr-next').value=r.next||'';
+  document.getElementById('dr-tags').value=r.tags.join(', ');
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  const mb=document.querySelector(`.mood-btn[data-mood="${r.mood}"]`);
+  if(mb){mb.classList.add('selected');const lbl=document.getElementById('mood-label');if(lbl)lbl.textContent=MOOD_LABELS[r.mood]||'';}
+  selectedMood=r.mood||'☀️';
+}
+
+function deleteDailyReport(id){
+  if(!confirm('この日報を削除しますか？'))return;
+  dailyReports=dailyReports.filter(r=>r.id!=id);
+  save('daily');updateBadges();renderDailyList();closeOverlay();
+}
+
+// ═══════════════════════════════════════
+// WIKI
+// ═══════════════════════════════════════
+function setWikiView(v){
+  wikiView=v;
+  document.getElementById('vg').classList.toggle('active',v==='grid');
+  document.getElementById('vl').classList.toggle('active',v==='list');
+  renderWiki();
+}
+
+function renderWiki(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const list=wikiItems.filter(p=>{
+    if(wikiCat!=='すべて'&&p.cat!==wikiCat)return false;
+    if(q&&!p.title.toLowerCase().includes(q)&&!p.desc.toLowerCase().includes(q)&&!(p.prompt||'').toLowerCase().includes(q)&&!p.tags.some(t=>t.toLowerCase().includes(q)))return false;
     return true;
   });
-}
-
-function render() {
-  const list = filtered();
-  document.getElementById('count-label').textContent = `${list.length} 件`;
-  const area = document.getElementById('cards-area');
-  if (!list.length) {
-    area.innerHTML = `<div class="empty-state">🔍 見つかりません<p>条件を変えて再検索してみてください</p></div>`;
-    return;
-  }
-  const wrap = document.createElement('div');
-  wrap.className = view === 'grid' ? 'grid' : 'list';
-  wrap.innerHTML = list.map(p => `
-    <div class="card" onclick="openView(${p.id})">
+  // cats
+  const counts={};
+  WIKI_CATS.forEach(c=>counts[c]=0);
+  wikiItems.forEach(p=>{counts['すべて']++;counts[p.cat]=(counts[p.cat]||0)+1;});
+  document.getElementById('wiki-cat-tabs').innerHTML=WIKI_CATS.map(c=>
+    `<div class="cat-tab${wikiCat===c?' active':''}" onclick="wikiCat='${c}';renderWiki()">${c} ${counts[c]||0}</div>`).join('');
+  document.getElementById('wiki-count').textContent=`${list.length} 件`;
+  const area=document.getElementById('wiki-area');
+  if(!list.length){area.innerHTML=`<div class="empty-state">🔍 見つかりません<p>条件を変えて再検索してください</p></div>`;return;}
+  const wrap=document.createElement('div');
+  wrap.className=wikiView==='grid'?'wiki-grid':'wiki-list';
+  wrap.innerHTML=list.map(p=>`
+    <div class="card" onclick="openWikiView(${p.id})">
       <div class="card-head">
         <div class="card-title">${e(p.title)}</div>
-        <button class="star-btn${p.star?' on':''}" onclick="toggleStar(event,${p.id})">★</button>
+        <button class="star-btn${p.star?' on':''}" onclick="toggleWikiStar(event,${p.id})">★</button>
       </div>
       <div class="card-desc">${e(p.desc)}</div>
       <div class="card-foot">
@@ -453,116 +640,619 @@ function render() {
         ${p.tags.map((t,i)=>`<span class="tag ${TAG_COLORS[i%TAG_COLORS.length]}">${e(t)}</span>`).join('')}
       </div>
     </div>`).join('');
-  area.innerHTML = '';
-  area.appendChild(wrap);
+  area.innerHTML='';area.appendChild(wrap);
 }
 
-function toggleStar(ev, id) {
+function toggleWikiStar(ev,id){
   ev.stopPropagation();
-  const p = prompts.find(x=>x.id===id);
-  if (p) { p.star=!p.star; saveData(); render(); renderCats(); }
+  const p=wikiItems.find(x=>x.id===id);
+  if(p){p.star=!p.star;save('wiki');renderWiki();}
 }
 
-function openView(id) {
-  const p = prompts.find(x=>x.id===id); if (!p) return;
+function openWikiView(id){
+  const p=wikiItems.find(x=>x.id===id);if(!p)return;
   showOverlay(`
-    <div class="modal-head">
-      <h2>${e(p.title)}</h2>
-      <button class="close" onclick="closeOverlay()">×</button>
-    </div>
+    <div class="modal-head"><h2>${e(p.title)}</h2><button class="close" onclick="closeOverlay()">×</button></div>
     <div class="modal-body">
-      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
         <span class="tag amber">${e(p.cat)}</span>
         ${p.tags.map((t,i)=>`<span class="tag ${TAG_COLORS[i%TAG_COLORS.length]}">${e(t)}</span>`).join('')}
       </div>
       <p style="font-size:13px;color:var(--text2);line-height:1.7">${e(p.desc)}</p>
       <div style="display:flex;justify-content:space-between;align-items:center">
         <span style="font-size:12px;color:var(--text3)">プロンプト本文</span>
-        <button class="copy-btn" id="copy-btn" onclick="copyPrompt(${JSON.stringify(e(p.prompt))})">コピー</button>
+        <button class="copy-btn" id="copy-btn" onclick="copyText(${JSON.stringify(e(p.prompt||''))})">コピー</button>
       </div>
-      <div class="prompt-display">${e(p.prompt)}</div>
+      <div class="prompt-display">${e(p.prompt||'')}</div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-del" onclick="deletePrompt(${p.id})">削除</button>
+      <button class="btn btn-del" onclick="deleteWiki(${p.id})">削除</button>
       <button class="btn btn-ghost" onclick="closeOverlay()">閉じる</button>
-      <button class="btn btn-dark" onclick="closeOverlay();openEdit(${p.id})">編集</button>
+      <button class="btn btn-dark" onclick="closeOverlay();openWikiEdit(${p.id})">編集</button>
     </div>`);
 }
 
-function copyPrompt(text) {
-  const decoded = text.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
-  navigator.clipboard.writeText(decoded).then(() => {
-    const b = document.getElementById('copy-btn');
-    if (b) { b.textContent='コピー済み'; b.classList.add('copied'); setTimeout(()=>{b.textContent='コピー';b.classList.remove('copied');},1500); }
-  });
-}
+function openWikiNew(){openWikiForm({title:'',desc:'',prompt:'',cat:'執筆',tags:'',star:false},null);}
+function openWikiEdit(id){const p=wikiItems.find(x=>x.id===id);if(p)openWikiForm({...p,tags:p.tags.join(', ')},id);}
 
-function deletePrompt(id) {
-  if (!confirm('このプロンプトを削除しますか？')) return;
-  prompts = prompts.filter(p=>p.id!==id);
-  saveData(); render(); renderCats(); closeOverlay();
-}
-
-let editId = null;
-
-function openNew() { editId=null; showForm({title:'',desc:'',prompt:'',cat:'執筆',tags:'',star:false}); }
-function openEdit(id) { const p=prompts.find(x=>x.id===id); if(p){editId=id;showForm({...p,tags:p.tags.join(', ')});} }
-
-function showForm(d) {
+function openWikiForm(d,editId){
   showOverlay(`
-    <div class="modal-head">
-      <h2>${editId?'プロンプトを編集':'新規プロンプト'}</h2>
-      <button class="close" onclick="closeOverlay()">×</button>
-    </div>
+    <div class="modal-head"><h2>${editId?'Prompt Wikiを編集':'新規 Prompt Wiki'}</h2><button class="close" onclick="closeOverlay()">×</button></div>
     <div class="modal-body">
-      <div class="field"><label>タイトル *</label><input id="f-title" value="${e(d.title)}" placeholder="例: ブログ記事生成"></div>
-      <div class="field"><label>説明</label><input id="f-desc" value="${e(d.desc)}" placeholder="このプロンプトの用途を簡潔に"></div>
+      <div class="field"><label>タイトル *</label><input id="wf-title" value="${e(d.title)}" placeholder="例: ブログ記事生成"></div>
+      <div class="field"><label>説明</label><input id="wf-desc" value="${e(d.desc)}" placeholder="この項目の用途を簡潔に"></div>
       <div class="field"><label>カテゴリ</label>
-        <select id="f-cat">${CATS.filter(c=>c!=='すべて').map(c=>`<option${c===d.cat?' selected':''}>${c}</option>`).join('')}</select>
+        <select id="wf-cat">${WIKI_CATS.filter(c=>c!=='すべて').map(c=>`<option${c===d.cat?' selected':''}>${c}</option>`).join('')}</select>
       </div>
-      <div class="field"><label>プロンプト本文</label><textarea id="f-prompt" placeholder="プロンプトを入力...">${e(d.prompt)}</textarea></div>
-      <div class="field"><label>タグ（カンマ区切り）</label><input id="f-tags" value="${e(d.tags)}" placeholder="例: SEO, ブログ, 記事"></div>
+      <div class="field"><label>本文 / プロンプト</label><textarea id="wf-prompt" rows="5" placeholder="内容を入力...">${e(d.prompt||'')}</textarea></div>
+      <div class="field"><label>タグ（カンマ区切り）</label><input id="wf-tags" value="${e(d.tags)}" placeholder="例: SEO, ブログ"></div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeOverlay()">キャンセル</button>
-      <button class="btn btn-dark" onclick="savePrompt()">保存</button>
+      <button class="btn btn-dark" onclick="saveWiki(${editId||'null'})">保存</button>
     </div>`);
 }
 
-function savePrompt() {
-  const title = document.getElementById('f-title').value.trim();
-  if (!title) { alert('タイトルを入力してください'); return; }
-  const data = {
-    title,
-    desc: document.getElementById('f-desc').value.trim(),
-    prompt: document.getElementById('f-prompt').value,
-    cat: document.getElementById('f-cat').value,
-    tags: document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
-    star: false
-  };
-  if (editId) {
-    const idx = prompts.findIndex(p=>p.id===editId);
-    if (idx>=0) { data.id=editId; data.star=prompts[idx].star; prompts[idx]=data; }
-  } else {
-    data.id = Date.now();
-    prompts.unshift(data);
-  }
-  saveData(); render(); renderCats(); closeOverlay();
+function saveWiki(editId){
+  const title=document.getElementById('wf-title').value.trim();
+  if(!title){alert('タイトルを入力してください');return;}
+  const data={title,desc:document.getElementById('wf-desc').value.trim(),prompt:document.getElementById('wf-prompt').value,cat:document.getElementById('wf-cat').value,tags:document.getElementById('wf-tags').value.split(',').map(t=>t.trim()).filter(Boolean),star:false};
+  if(editId){
+    const idx=wikiItems.findIndex(p=>p.id===editId);
+    if(idx>=0){data.id=editId;data.star=wikiItems[idx].star;wikiItems[idx]=data;}
+  }else{data.id=Date.now();wikiItems.unshift(data);}
+  save('wiki');updateBadges();renderWiki();closeOverlay();
 }
 
-function showOverlay(html) {
+function deleteWiki(id){
+  if(!confirm('このWikiを削除しますか？'))return;
+  wikiItems=wikiItems.filter(p=>p.id!==id);
+  save('wiki');updateBadges();renderWiki();closeOverlay();
+}
+
+function copyText(text){
+  const decoded=text.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+  navigator.clipboard.writeText(decoded).then(()=>{
+    const b=document.getElementById('copy-btn');
+    if(b){b.textContent='コピー済み';b.classList.add('copied');setTimeout(()=>{b.textContent='コピー';b.classList.remove('copied');},1500);}
+  });
+}
+
+// ═══════════════════════════════════════
+// TODO
+// ═══════════════════════════════════════
+const TODO_STATUSES=[{key:'todo',label:'未着手'},{key:'doing',label:'進行中'},{key:'done',label:'完了'}];
+
+function renderTodo(){
+  const cols=document.getElementById('todo-cols');
+  cols.innerHTML=TODO_STATUSES.map(s=>{
+    const items=todos.filter(t=>t.status===s.key);
+    return `<div class="todo-col">
+      <div class="todo-col-header">
+        <span class="todo-col-title">${s.label}</span>
+        <span class="todo-col-count">${items.length}</span>
+      </div>
+      ${items.map(t=>`
+        <div class="todo-item${t.status==='done'?' todo-item-done':''}" onclick="openTodoView(${t.id})">
+          <div style="display:flex;align-items:flex-start;gap:7px">
+            <span class="priority-dot ${t.priority}" style="margin-top:5px"></span>
+            <div style="flex:1">
+              <div class="todo-item-title">${e(t.title)}</div>
+              <div class="todo-item-meta">
+                ${t.due?`<span class="todo-due">📅 ${t.due}</span>`:''}
+                ${t.tags.map(tg=>`<span class="tag" style="font-size:10px;padding:1px 7px">${e(tg)}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>`).join('')}
+      <button class="btn btn-ghost" style="width:100%;margin-top:4px;font-size:12px" onclick="openTodoNew('${s.key}')">+ 追加</button>
+    </div>`;
+  }).join('');
+
+  const total=todos.length,done=todos.filter(t=>t.status==='done').length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('todo-stats').innerHTML=`
+    <div class="stat-row"><span>全タスク</span><span class="stat-val">${total}</span></div>
+    <div class="stat-row"><span>未着手</span><span class="stat-val">${todos.filter(t=>t.status==='todo').length}</span></div>
+    <div class="stat-row"><span>進行中</span><span class="stat-val">${todos.filter(t=>t.status==='doing').length}</span></div>
+    <div class="stat-row"><span>完了</span><span class="stat-val">${done}</span></div>`;
+  document.getElementById('todo-progress-pct').textContent=pct+'%';
+  document.getElementById('todo-progress-fill').style.width=pct+'%';
+  updateBadges();
+}
+
+function openTodoNew(defaultStatus){
+  openTodoForm({title:'',status:defaultStatus||'todo',priority:'med',due:'',tags:''},null);
+}
+
+function openTodoView(id){
+  id=typeof id==='string'?parseInt(id):id;
+  const t=todos.find(x=>x.id==id);if(!t)return;
+  const pLabels={high:'🔴 高',med:'🟡 中',low:'🟢 低'};
+  const sLabels={todo:'未着手',doing:'進行中',done:'完了'};
+  showOverlay(`
+    <div class="modal-head"><h2>${e(t.title)}</h2><button class="close" onclick="closeOverlay()">×</button></div>
+    <div class="modal-body">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="tag">${sLabels[t.status]}</span>
+        <span class="tag">${pLabels[t.priority]||t.priority}</span>
+        ${t.due?`<span class="tag">📅 ${t.due}</span>`:''}
+        ${t.tags.map(tg=>`<span class="tag teal">${e(tg)}</span>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        ${TODO_STATUSES.map(s=>`<button class="btn${t.status===s.key?' btn-dark':' btn-ghost'}" onclick="updateTodoStatus(${t.id},'${s.key}')">${s.label}</button>`).join('')}
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-del" onclick="deleteTodo(${t.id})">削除</button>
+      <button class="btn btn-ghost" onclick="closeOverlay()">閉じる</button>
+      <button class="btn btn-dark" onclick="closeOverlay();openTodoForm({...todos.find(x=>x.id===${t.id}),tags:todos.find(x=>x.id===${t.id}).tags.join(', ')},${t.id})">編集</button>
+    </div>`);
+}
+
+function updateTodoStatus(id,status){
+  id=typeof id==='string'?parseInt(id):id;
+  const t=todos.find(x=>x.id==id);
+  if(t){t.status=status;save('todo');renderTodo();closeOverlay();}
+}
+
+function openTodoForm(d,editId){
+  showOverlay(`
+    <div class="modal-head"><h2>${editId?'Todoを編集':'新規 Todo'}</h2><button class="close" onclick="closeOverlay()">×</button></div>
+    <div class="modal-body">
+      <div class="field"><label>タイトル *</label><input id="tf-title" value="${e(d.title)}" placeholder="タスク名"></div>
+      <div class="field"><label>ステータス</label>
+        <select id="tf-status">${TODO_STATUSES.map(s=>`<option value="${s.key}"${d.status===s.key?' selected':''}>${s.label}</option>`).join('')}</select>
+      </div>
+      <div class="field"><label>優先度</label>
+        <select id="tf-priority">
+          <option value="high"${d.priority==='high'?' selected':''}>🔴 高</option>
+          <option value="med"${d.priority==='med'?' selected':''}>🟡 中</option>
+          <option value="low"${d.priority==='low'?' selected':''}>🟢 低</option>
+        </select>
+      </div>
+      <div class="field"><label>期日</label><input type="date" id="tf-due" value="${d.due||''}"></div>
+      <div class="field"><label>タグ（カンマ区切り）</label><input id="tf-tags" value="${e(d.tags||'')}" placeholder="例: 開発, 会議"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeOverlay()">キャンセル</button>
+      <button class="btn btn-dark" onclick="saveTodo(${editId||'null'})">保存</button>
+    </div>`);
+}
+
+function saveTodo(editId){
+  const title=document.getElementById('tf-title').value.trim();
+  if(!title){alert('タイトルを入力してください');return;}
+  const data={title,status:document.getElementById('tf-status').value,priority:document.getElementById('tf-priority').value,due:document.getElementById('tf-due').value,tags:document.getElementById('tf-tags').value.split(',').map(t=>t.trim()).filter(Boolean)};
+  if(editId){
+    const idx=todos.findIndex(t=>t.id==editId);
+    if(idx>=0){data.id=editId;todos[idx]=data;}
+  }else{data.id=Date.now();todos.unshift(data);}
+  save('todo');renderTodo();closeOverlay();
+}
+
+function deleteTodo(id){
+  id=typeof id==='string'?parseInt(id):id;
+  if(!confirm('このタスクを削除しますか？'))return;
+  todos=todos.filter(t=>t.id!=id);
+  save('todo');renderTodo();closeOverlay();
+}
+
+// ═══════════════════════════════════════
+// APPS
+// ═══════════════════════════════════════
+const APP_ICONS=['🚀','📊','📝','🔧','🎯','🌐','📱','💡','🔍','📈','🛠️','✨'];
+
+function renderApps(){
+  const grid=document.getElementById('apps-grid');
+  grid.innerHTML=apps.map(a=>`
+    <div class="app-card">
+      <div class="app-card-icon" style="background:${a.color||'#f0ede8'}">${a.icon||'🚀'}</div>
+      <div class="app-card-title">${e(a.title)}</div>
+      <div class="app-card-desc">${e(a.desc)}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">${a.tags.map(t=>`<span class="tag">${e(t)}</span>`).join('')}</div>
+      <div class="app-card-footer">
+        <div class="app-status">
+          <span class="status-dot ${a.status==='active'?'active':'dev'}"></span>
+          ${a.status==='active'?'公開中':'開発中'}
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="app-open-btn" onclick="editApp(${a.id},event)">編集</button>
+          ${a.url?`<button class="app-open-btn" onclick="openApp('${e(a.url)}',event)">開く →</button>`:''}
+        </div>
+      </div>
+    </div>`).join('')||'<div class="empty-state">🚀 まだアプリがありません<p>右上の「+ 新規アプリ」から追加しましょう</p></div>';
+}
+
+function openApp(url,ev){ev.stopPropagation();if(url)window.open(url,'_blank');}
+function editApp(id,ev){ev&&ev.stopPropagation();const a=apps.find(x=>x.id===id);if(a)openAppForm({...a,tags:a.tags.join(', ')},id);}
+
+function openAppNew(){openAppForm({title:'',desc:'',icon:'🚀',color:'#ede9fe',status:'dev',url:'',tags:''},null);}
+
+function openAppForm(d,editId){
+  showOverlay(`
+    <div class="modal-head"><h2>${editId?'アプリを編集':'新規アプリ登録'}</h2><button class="close" onclick="closeOverlay()">×</button></div>
+    <div class="modal-body">
+      <div class="field"><label>アプリ名 *</label><input id="af-title" value="${e(d.title)}" placeholder="例: Prompt Wiki"></div>
+      <div class="field"><label>説明</label><input id="af-desc" value="${e(d.desc)}" placeholder="このアプリの概要"></div>
+      <div style="display:flex;gap:12px">
+        <div class="field" style="flex:1"><label>アイコン（絵文字）</label><input id="af-icon" value="${e(d.icon||'🚀')}" placeholder="🚀" style="font-size:20px"></div>
+        <div class="field" style="flex:1"><label>カードカラー</label><input type="color" id="af-color" value="${d.color||'#ede9fe'}" style="height:40px;cursor:pointer"></div>
+      </div>
+      <div class="field"><label>ステータス</label>
+        <select id="af-status">
+          <option value="active"${d.status==='active'?' selected':''}>公開中</option>
+          <option value="dev"${d.status==='dev'?' selected':''}>開発中</option>
+        </select>
+      </div>
+      <div class="field"><label>URL（任意）</label><input id="af-url" value="${e(d.url||'')}" placeholder="https://..."></div>
+      <div class="field"><label>タグ（カンマ区切り）</label><input id="af-tags" value="${e(d.tags||'')}" placeholder="例: プロンプト, 分析"></div>
+    </div>
+    <div class="modal-foot">
+      ${editId?`<button class="btn btn-del" onclick="deleteApp(${editId})">削除</button>`:''}
+      <button class="btn btn-ghost" onclick="closeOverlay()">キャンセル</button>
+      <button class="btn btn-dark" onclick="saveApp(${editId||'null'})">保存</button>
+    </div>`);
+}
+
+function saveApp(editId){
+  const title=document.getElementById('af-title').value.trim();
+  if(!title){alert('アプリ名を入力してください');return;}
+  const data={title,desc:document.getElementById('af-desc').value.trim(),icon:document.getElementById('af-icon').value.trim()||'🚀',color:document.getElementById('af-color').value,status:document.getElementById('af-status').value,url:document.getElementById('af-url').value.trim(),tags:document.getElementById('af-tags').value.split(',').map(t=>t.trim()).filter(Boolean)};
+  if(editId){
+    const idx=apps.findIndex(a=>a.id===editId);
+    if(idx>=0){data.id=editId;apps[idx]=data;}
+  }else{data.id=Date.now();apps.unshift(data);}
+  save('apps');updateBadges();renderApps();closeOverlay();
+}
+
+function deleteApp(id){
+  if(!confirm('このアプリを削除しますか？'))return;
+  apps=apps.filter(a=>a.id!==id);
+  save('apps');updateBadges();renderApps();closeOverlay();
+}
+
+
+// ═══════════════════════════════════════
+// 1on1
+// ═══════════════════════════════════════
+function resetOneForm(){
+  document.getElementById('one-edit-id').value='';
+  document.getElementById('one-form-title').textContent='1on1 を記録';
+  document.getElementById('one-date').value=new Date().toISOString().split('T')[0];
+  document.querySelectorAll('#partner-checks input[type=checkbox]').forEach(cb=>cb.checked=false);
+  document.getElementById('one-doc-url').value='';
+  document.getElementById('one-agenda').value='';
+  document.getElementById('one-talked').value='';
+  document.getElementById('one-issues').value='';
+  document.getElementById('one-next').value='';
+  document.getElementById('one-tags').value='';
+}
+
+function saveOne(){
+  const partners=[...document.querySelectorAll('#partner-checks input[type=checkbox]:checked')].map(cb=>cb.value);
+  if(!partners.length){alert('参加者を1人以上選択してください');return;}
+  const date=document.getElementById('one-date').value;
+  if(!date){alert('日付を入力してください');return;}
+  const editId=document.getElementById('one-edit-id').value;
+  const data={
+    id:editId||Date.now(),date,partners,partner:partners.join('・'),
+    docUrl:document.getElementById('one-doc-url').value.trim(),
+    agenda:document.getElementById('one-agenda').value.trim(),
+    talked:document.getElementById('one-talked').value.trim(),
+    issues:document.getElementById('one-issues').value.trim(),
+    next:document.getElementById('one-next').value.trim(),
+    tags:document.getElementById('one-tags').value.split(',').map(t=>t.trim()).filter(Boolean)
+  };
+  if(editId){
+    const idx=ones.findIndex(r=>r.id==editId);
+    if(idx>=0)ones[idx]=data;
+  }else{
+    ones.unshift(data);
+  }
+  save('one');updateBadges();renderOneList();
+renderSheets();resetOneForm();
+}
+
+const ONE_PARTNERS=['山元さん','青木さん','山口さん（輔）','山口さん（介）'];
+let oneFilterPartner='すべて';
+
+function renderOneList(){
+  // フィルタータブ
+  const counts={'すべて':ones.length};
+  ONE_PARTNERS.forEach(p=>counts[p]=ones.filter(o=>(o.partners||[o.partner]).includes(p)).length);
+  const tabsEl=document.getElementById('one-partner-tabs');
+  if(tabsEl){
+    tabsEl.innerHTML=['すべて',...ONE_PARTNERS].map(p=>
+      `<div class="cat-tab${oneFilterPartner===p?' active':''}" onclick="oneFilterPartner='${p}';renderOneList()">${p} <span style="opacity:.6">${counts[p]||0}</span></div>`
+    ).join('');
+  }
+  const list=ones.filter(o=>oneFilterPartner==='すべて'||(o.partners||[o.partner]).includes(oneFilterPartner))
+    .slice().sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('one-history-count').textContent=`(${list.length}件)`;
+  document.getElementById('one-list').innerHTML=list.map(r=>`
+    <div class="report-card" onclick="openOneView(${r.id})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="report-date">${r.date}</div>
+          <div class="report-summary" style="display:flex;align-items:center;gap:7px">
+            ${(r.partners||[r.partner]).map(p=>`<span style="background:var(--blue-bg);color:var(--blue-text);font-size:11px;padding:2px 9px;border-radius:99px;font-weight:500;display:inline-block">🤝 ${e(p)}</span>`).join('')}
+          </div>
+          ${r.talked?`<div style="font-size:12px;color:var(--text2);margin-top:5px;line-height:1.5">${e(r.talked.split('\n')[0].slice(0,50))}${r.talked.length>50?'…':''}</div>`:''}
+        </div>
+        ${r.next?'<span style="font-size:16px" title="次回Todoあり">📌</span>':''}
+      </div>
+      <div class="report-tags" style="margin-top:8px">${r.tags.map(t=>`<span class="tag">${e(t)}</span>`).join('')}</div>
+    </div>`).join('')||'<div class="empty-state">🤝 まだ1on1の記録がありません<p>左のフォームから記録しましょう</p></div>';
+}
+
+function openOneView(id){
+  const r=ones.find(x=>x.id==id);if(!r)return;
+  showOverlay(`
+    <div class="modal-head">
+      <h2>🤝 ${(r.partners||[r.partner]).join('・')}</h2>
+      <button class="close" onclick="closeOverlay()">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:12px;color:var(--text3)">${r.date}</span>
+        ${r.docUrl?`<a href="${e(r.docUrl)}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;font-size:11px;font-weight:500;background:var(--teal-bg);color:var(--teal-text);border-radius:99px;text-decoration:none">📄 議事録を開く</a>`:''}
+      </div>
+      ${r.agenda?`<div style="background:var(--purple-bg);border-radius:var(--radius);padding:12px 14px">
+        <strong style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--purple-text)">📋 事前確認・話したい内容</strong>
+        <p style="margin-top:6px;font-size:13px;line-height:1.7;color:var(--text)">${e(r.agenda).replace(/\n/g,'<br>')}</p>
+      </div>`:''}
+      ${r.talked?`<div>
+        <strong style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)">話した内容</strong>
+        <p style="margin-top:6px;font-size:13px;line-height:1.7">${e(r.talked).replace(/\n/g,'<br>')}</p>
+      </div>`:''}
+      ${r.issues?`<div>
+        <strong style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)">課題</strong>
+        <p style="margin-top:6px;font-size:13px;line-height:1.7">${e(r.issues).replace(/\n/g,'<br>')}</p>
+      </div>`:''}
+      ${r.next?`<div style="background:var(--amber-bg);border-radius:var(--radius);padding:12px 14px">
+        <strong style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--amber-text)">📌 次回以降の Todo</strong>
+        <p style="margin-top:6px;font-size:13px;line-height:1.7;color:var(--text)">${e(r.next).replace(/\n/g,'<br>')}</p>
+      </div>`:''}
+      ${r.tags.length?`<div style="display:flex;gap:5px;flex-wrap:wrap">${r.tags.map(t=>`<span class="tag">${e(t)}</span>`).join('')}</div>`:''}
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-del" onclick="deleteOne(${r.id})">削除</button>
+      <button class="btn btn-ghost" onclick="closeOverlay()">閉じる</button>
+      <button class="btn btn-dark" onclick="editOne(${r.id});closeOverlay()">編集</button>
+    </div>`);
+}
+
+function editOne(id){
+  const r=ones.find(x=>x.id==id);if(!r)return;
+  document.getElementById('one-edit-id').value=r.id;
+  document.getElementById('one-form-title').textContent='1on1 を編集';
+  document.getElementById('one-date').value=r.date;
+  const editPartners=r.partners||[r.partner];
+  document.querySelectorAll('#partner-checks input[type=checkbox]').forEach(cb=>{
+    cb.checked=editPartners.includes(cb.value);
+  });
+  document.getElementById('one-doc-url').value=r.docUrl||'';
+  document.getElementById('one-agenda').value=r.agenda||'';
+  document.getElementById('one-talked').value=r.talked||'';
+  document.getElementById('one-issues').value=r.issues||'';
+  document.getElementById('one-next').value=r.next||'';
+  document.getElementById('one-tags').value=r.tags.join(', ');
   closeOverlay();
-  const ov = document.createElement('div');
-  ov.className = 'overlay'; ov.id = 'overlay';
-  ov.onclick = ev => { if(ev.target===ov) closeOverlay(); };
-  ov.innerHTML = `<div class="modal">${html}</div>`;
+}
+
+function deleteOne(id){
+  if(!confirm('この1on1記録を削除しますか？'))return;
+  ones=ones.filter(r=>r.id!=id);
+  save('one');updateBadges();renderOneList();
+renderSheets();closeOverlay();
+}
+
+
+// ═══════════════════════════════════════
+// SHEETS
+// ═══════════════════════════════════════
+// カテゴリツリー定義
+// cat: 'HRS' | 'ビジソ'
+// subcat: null | 'エンジニア' | 'AI作業効率化'
+const SHEET_TREE = [
+  { key:'すべて', label:'すべて', sub:[] },
+  { key:'HRS',   label:'HRS',   sub:[] },
+  { key:'ビジソ', label:'ビジソ', sub:[
+    { key:'ビジソ/エンジニア',    label:'エンジニア' },
+    { key:'ビジソ/AI作業効率化',  label:'AI作業効率化' },
+  ]},
+];
+let sheetCatFilter='すべて';
+
+function matchSheetCat(s, filter){
+  if(filter==='すべて') return true;
+  if(filter==='HRS') return s.cat==='HRS';
+  if(filter==='ビジソ') return s.cat==='ビジソ';
+  if(filter==='ビジソ/エンジニア')   return s.cat==='ビジソ' && s.subcat==='エンジニア';
+  if(filter==='ビジソ/AI作業効率化') return s.cat==='ビジソ' && s.subcat==='AI作業効率化';
+  return true;
+}
+
+function countCat(filter){
+  return sheets.filter(s=>matchSheetCat(s,filter)).length;
+}
+
+function renderSheetsCatTree(){
+  const tree=document.getElementById('sheets-cat-tree');
+  if(!tree)return;
+  let html='';
+  SHEET_TREE.forEach(node=>{
+    html+=`<div class="cat-tree-item${sheetCatFilter===node.key?' active':''}" onclick="sheetCatFilter='${node.key}';renderSheets()">
+      <span>${node.label}</span>
+      <span class="cat-badge-sm">${countCat(node.key)}</span>
+    </div>`;
+    if(node.sub&&node.sub.length){
+      node.sub.forEach(child=>{
+        html+=`<div class="cat-tree-child${sheetCatFilter===child.key?' active':''}" onclick="sheetCatFilter='${child.key}';renderSheets()">
+          <span>${child.label}</span>
+          <span class="cat-badge-sm">${countCat(child.key)}</span>
+        </div>`;
+      });
+    }
+  });
+  tree.innerHTML=html;
+}
+
+function catLabel(s){
+  if(!s.cat) return '-';
+  if(s.cat==='ビジソ'&&s.subcat) return `ビジソ / ${s.subcat}`;
+  return s.cat;
+}
+
+function renderSheets(){
+  renderSheetsCatTree();
+  const q=(document.getElementById('sheets-search').value||'').toLowerCase();
+  const list=sheets.filter(s=>{
+    if(!matchSheetCat(s,sheetCatFilter)) return false;
+    if(q&&!s.name.toLowerCase().includes(q)&&!(s.desc||'').toLowerCase().includes(q)&&!(s.memo||'').toLowerCase().includes(q)&&!(s.tags||[]).some(t=>t.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  const tbody=document.getElementById('sheets-tbody');
+  if(!list.length){
+    tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:48px;color:var(--text3)">📊 スプレッドシートがありません</td></tr>`;
+    return;
+  }
+  tbody.innerHTML=list.map(s=>`
+    <tr>
+      <td>
+        <div class="sheet-name">${e(s.name)}</div>
+        ${s.desc?`<div class="sheet-desc">${e(s.desc)}</div>`:''}
+        ${s.memo?`<div class="sheet-desc" style="color:var(--text3)">📝 ${e(s.memo.slice(0,40))}${s.memo.length>40?'…':''}</div>`:''}
+      </td>
+      <td>
+        <span class="tag amber" style="white-space:nowrap">${e(catLabel(s))}</span>
+        ${(s.tags||[]).map(t=>`<span class="tag" style="margin:2px 2px 2px 0;display:inline-block">${e(t)}</span>`).join('')}
+      </td>
+      <td style="font-size:12px;color:var(--text3);white-space:nowrap">${s.updated||'-'}</td>
+      <td>${s.url?`<a class="sheet-url-btn" href="${e(s.url)}" target="_blank">🔗 開く</a>`:'-'}</td>
+      <td>
+        <div class="sheet-actions">
+          <button class="sheet-edit-btn" onclick="openSheetEdit(${s.id})">編集</button>
+          <button class="sheet-edit-btn" style="color:var(--coral-text)" onclick="deleteSheet(${s.id})">削除</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function openSheetNew(){
+  // 現在のフィルターからデフォルト値を推定
+  let defCat='', defSub='';
+  if(sheetCatFilter==='HRS'){defCat='HRS';}
+  else if(sheetCatFilter==='ビジソ'){defCat='ビジソ';}
+  else if(sheetCatFilter==='ビジソ/エンジニア'){defCat='ビジソ';defSub='エンジニア';}
+  else if(sheetCatFilter==='ビジソ/AI作業効率化'){defCat='ビジソ';defSub='AI作業効率化';}
+  openSheetForm({name:'',desc:'',cat:defCat,subcat:defSub,tags:[],url:'',updated:new Date().toISOString().split('T')[0],memo:''},null);
+}
+
+function openSheetEdit(id){
+  id=typeof id==='string'?parseInt(id):id;
+  const s=sheets.find(x=>x.id==id);if(s)openSheetForm({...s},id);
+}
+
+function openSheetForm(d,editId){
+  const isBijiso = (d.cat||'')==='ビジソ';
+  showOverlay(`
+    <div class="modal-head"><h2>${editId?'シートを編集':'新規シート登録'}</h2><button class="close" onclick="closeOverlay()">×</button></div>
+    <div class="modal-body">
+      <div class="field"><label>シート名 *</label><input id="sf-name" value="${e(d.name)}" placeholder="例: 営業管理シート2026"></div>
+      <div class="field"><label>説明</label><input id="sf-desc" value="${e(d.desc||'')}" placeholder="このシートの用途・概要"></div>
+      <div class="field"><label>カテゴリ *</label>
+        <select id="sf-cat" onchange="onSheetCatChange()">
+          <option value="">-- 選択してください --</option>
+          <option value="HRS"${d.cat==='HRS'?' selected':''}>HRS</option>
+          <option value="ビジソ"${d.cat==='ビジソ'?' selected':''}>ビジソ</option>
+        </select>
+      </div>
+      <div class="field" id="sf-subcat-wrap" style="${isBijiso?'':'display:none'}">
+        <label>フォルダ（ビジソ内）</label>
+        <select id="sf-subcat">
+          <option value="">なし（ビジソ直下）</option>
+          <option value="エンジニア"${d.subcat==='エンジニア'?' selected':''}>エンジニア</option>
+          <option value="AI作業効率化"${d.subcat==='AI作業効率化'?' selected':''}>AI作業効率化</option>
+        </select>
+      </div>
+      <div class="field"><label>タグ（カンマ区切り）</label>
+        <input id="sf-tags" value="${e((d.tags||[]).join(', '))}" placeholder="例: 月次, 売上管理">
+      </div>
+      <div class="field"><label>URL</label><input id="sf-url" value="${e(d.url||'')}" placeholder="https://docs.google.com/spreadsheets/..."></div>
+      <div class="field"><label>最終更新日</label><input type="date" id="sf-updated" value="${d.updated||''}"></div>
+      <div class="field"><label>メモ・備考</label><textarea id="sf-memo" rows="3" placeholder="補足情報・注意点など...">${e(d.memo||'')}</textarea></div>
+    </div>
+    <div class="modal-foot">
+      ${editId?`<button class="btn btn-del" onclick="deleteSheet(${editId});closeOverlay()">削除</button>`:''}
+      <button class="btn btn-ghost" onclick="closeOverlay()">キャンセル</button>
+      <button class="btn btn-dark" onclick="saveSheet(${editId||'null'})">保存</button>
+    </div>`);
+}
+
+function onSheetCatChange(){
+  const cat=document.getElementById('sf-cat').value;
+  const wrap=document.getElementById('sf-subcat-wrap');
+  if(wrap) wrap.style.display=cat==='ビジソ'?'':'none';
+}
+
+function saveSheet(editId){
+  const name=document.getElementById('sf-name').value.trim();
+  if(!name){alert('シート名を入力してください');return;}
+  const cat=document.getElementById('sf-cat').value;
+  if(!cat){alert('カテゴリを選択してください');return;}
+  const subcatEl=document.getElementById('sf-subcat');
+  const data={
+    name,
+    desc:document.getElementById('sf-desc').value.trim(),
+    cat,
+    subcat:cat==='ビジソ'&&subcatEl?subcatEl.value:'',
+    tags:document.getElementById('sf-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    url:document.getElementById('sf-url').value.trim(),
+    updated:document.getElementById('sf-updated').value,
+    memo:document.getElementById('sf-memo').value.trim(),
+  };
+  if(editId){
+    const idx=sheets.findIndex(s=>s.id==editId);
+    if(idx>=0){data.id=editId;sheets[idx]=data;}
+  }else{data.id=Date.now();sheets.unshift(data);}
+  save('sheets');updateBadges();renderSheets();closeOverlay();
+}
+
+function deleteSheet(id){
+  id=typeof id==='string'?parseInt(id):id;
+  if(!confirm('このシートの登録を削除しますか？'))return;
+  sheets=sheets.filter(s=>s.id!=id);
+  save('sheets');updateBadges();renderSheets();closeOverlay();
+}
+
+// ═══════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════
+function showOverlay(html){
+  closeOverlay();
+  const ov=document.createElement('div');
+  ov.className='overlay';ov.id='overlay';
+  ov.onclick=ev=>{if(ev.target===ov)closeOverlay();};
+  ov.innerHTML=`<div class="modal">${html}</div>`;
   document.body.appendChild(ov);
 }
-function closeOverlay() { const o=document.getElementById('overlay'); if(o) o.remove(); }
+function closeOverlay(){const o=document.getElementById('overlay');if(o)o.remove();}
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape')closeOverlay();});
 
-document.addEventListener('keydown', ev => { if(ev.key==='Escape') closeOverlay(); });
-
-loadData();
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+load();
+resetDrForm();
+renderDailyList();
+renderWiki();
+renderTodo();
+renderApps();
+renderOneList();
+renderSheets();
 </script>
 </body>
 </html>
